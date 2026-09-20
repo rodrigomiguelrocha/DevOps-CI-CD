@@ -12,5 +12,39 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Mostrar Mensagem
-        run: echo "Hello, DevOps Workflow!"
+      - name: Build Aplicação
+        run: echo "Build do projeto em andamento..."
+
+  dev:
+      needs: build # Este job SÓ roda depois que 'build' terminar com sucesso
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Fase de Desenvolvimento
+          run: echo "Executando deploy de DEV"
+
+  qa:
+      needs: build # Este job TAMBÉM SÓ roda depois que 'build' terminar com sucesso
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Fase de Qualidade
+          run: echo "Executando deploy de QA"
+
+  homologacao:
+      needs:
+        - dev # Este job SÓ roda depois que 'dev' e 'qa' terminarem com sucesso
+        - qa
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Fase de Homologação
+          run: echo "Executando deploy de HML"
+
+  producao:
+      needs: homologacao # Este job SÓ roda depois que 'homologacao' terminar com sucesso
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Fase de Produção
+          run: echo "Executando deploy de PRD"
